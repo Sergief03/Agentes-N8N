@@ -1,0 +1,37 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - tfg_ollama_data:/root/.ollama
+    networks:
+      - n8n
+    # Descomenta las siguientes líneas para GPU NVIDIA
+    runtime: nvidia
+
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    volumes:
+      - /home/sergief/n8n_data_backup:/home/node/.n8n
+    networks:
+      - n8n
+
+networks:
+  n8n:
+    driver: bridge
+
+volumes:
+  tfg_ollama_data:
+    external: true
+  
